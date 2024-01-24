@@ -49,16 +49,19 @@
   >
     Delete Selected Contacts
   </button>
-</form>
-<p>
-  <a href="/contacts/new">Add Contact</a>
-  <span hx-get="/contacts/count" hx-trigger="revealed">
-    <img
-      id="spinner"
-      style="height: 20px"
-      class="htmx-indicator"
-      src="/static/img/spinning-circles.svg"
-    />
+  <span style="float: right">
+    <a href="/contacts/new">Add Contact</a>
+    <span hx-get="/contacts/count" hx-trigger="revealed">
+      <img
+        id="spinner"
+        style="height: 20px"
+        class="htmx-indicator"
+        src="/static/img/spinning-circles.svg"
+      />
+    </span>
   </span>
-</p>
+</form>
+
+<div style="margin-bottom: 10px"></div>
+
 {% include 'archive_ui.html' %} {% endblock %}

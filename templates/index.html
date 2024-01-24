@@ -1,4 +1,4 @@
-{% extends 'layout.html' %} {% block content %} {% include 'archive_ui.html' %}
+{% extends 'layout.html' %} {% block content %}
 
 <div style="margin-bottom: 20px"></div>
 
@@ -23,6 +23,8 @@
   />
   <input type="submit" value="Search" />
 </form>
+
+<div style="margin-bottom: 20px"></div>
 
 <form x-data="{ selected: [] }">
   <table>
@@ -59,5 +61,4 @@
     />
   </span>
 </p>
-
-{% endblock %}
+{% include 'archive_ui.html' %} {% endblock %}

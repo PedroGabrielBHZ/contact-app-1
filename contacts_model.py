@@ -10,6 +10,7 @@ from random import random
 # ========================================================
 PAGE_SIZE = 100
 
+
 class Contact:
     # mock contacts database
     db = {}
@@ -33,10 +34,15 @@ class Contact:
 
     def validate(self):
         if not self.email:
-            self.errors['email'] = "Email Required"
-        existing_contact = next(filter(lambda c: c.id != self.id and c.email == self.email, Contact.db.values()), None)
+            self.errors["email"] = "Email Required"
+        existing_contact = next(
+            filter(
+                lambda c: c.id != self.id and c.email == self.email, Contact.db.values()
+            ),
+            None,
+        )
         if existing_contact:
-            self.errors['email'] = "Email Must Be Unique"
+            self.errors["email"] = "Email Must Be Unique"
         return len(self.errors) == 0
 
     def save(self):
@@ -82,11 +88,13 @@ class Contact:
 
     @classmethod
     def load_db(cls):
-        with open('contacts.json', 'r') as contacts_file:
+        with open("contacts.json", "r") as contacts_file:
             contacts = json.load(contacts_file)
             cls.db.clear()
             for c in contacts:
-                cls.db[c['id']] = Contact(c['id'], c['first'], c['last'], c['phone'], c['email'])
+                cls.db[c["id"]] = Contact(
+                    c["id"], c["first"], c["last"], c["phone"], c["email"]
+                )
 
     @staticmethod
     def save_db():
@@ -135,7 +143,7 @@ class Archiver:
         Archiver.archive_status = "Complete"
 
     def archive_file(self):
-        return 'contacts.json'
+        return "contacts.json"
 
     def reset(self):
         Archiver.archive_status = "Waiting"

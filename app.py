@@ -1,6 +1,4 @@
-from flask import (
-    Flask, redirect, render_template, request, flash, jsonify, send_file
-)
+from flask import Flask, redirect, render_template, request, jsonify, send_file
 from contacts_model import Contact, Archiver
 import time
 
@@ -12,7 +10,7 @@ Contact.load_db()
 
 app = Flask(__name__)
 
-app.secret_key = b'hypermedia rocks'
+app.secret_key = b"hypermedia rocks"
 
 
 @app.route("/")
@@ -23,10 +21,9 @@ def index():
 @app.route("/contacts")
 def contacts():
     search = request.args.get("q")
-    page = int(request.args.get("page", 1))
     if search is not None:
         contacts_set = Contact.search(search)
-        if request.headers.get('HX-Trigger') == 'search':
+        if request.headers.get("HX-Trigger") == "search":
             return render_template("rows.html", contacts=contacts_set)
     else:
         contacts_set = Contact.all()
@@ -65,17 +62,21 @@ def contacts_count():
     return "(" + str(count) + " total Contacts)"
 
 
-@app.route("/contacts/new", methods=['GET'])
+@app.route("/contacts/new", methods=["GET"])
 def contacts_new_get():
     return render_template("new.html", contact=Contact())
 
 
-@app.route("/contacts/new", methods=['POST'])
+@app.route("/contacts/new", methods=["POST"])
 def contacts_new():
-    c = Contact(None, request.form['first_name'], request.form['last_name'], request.form['phone'],
-                request.form['email'])
+    c = Contact(
+        None,
+        request.form["first_name"],
+        request.form["last_name"],
+        request.form["phone"],
+        request.form["email"],
+    )
     if c.save():
-        flash("Created New Contact!")
         return redirect("/contacts")
     else:
         return render_template("new.html", contact=c)
@@ -96,9 +97,13 @@ def contacts_edit_get(contact_id=0):
 @app.route("/contacts/<contact_id>/edit", methods=["POST"])
 def contacts_edit_post(contact_id=0):
     c = Contact.find(contact_id)
-    c.update(request.form['first_name'], request.form['last_name'], request.form['phone'], request.form['email'])
+    c.update(
+        request.form["first_name"],
+        request.form["last_name"],
+        request.form["phone"],
+        request.form["email"],
+    )
     if c.save():
-        flash("Updated Contact!")
         return redirect("/contacts/" + str(contact_id))
     else:
         return render_template("edit.html", contact=c)
@@ -107,17 +112,16 @@ def contacts_edit_post(contact_id=0):
 @app.route("/contacts/<contact_id>/email", methods=["GET"])
 def contacts_email_get(contact_id=0):
     c = Contact.find(contact_id)
-    c.email = request.args.get('email')
+    c.email = request.args.get("email")
     c.validate()
-    return c.errors.get('email') or ""
+    return c.errors.get("email") or ""
 
 
 @app.route("/contacts/<contact_id>", methods=["DELETE"])
 def contacts_delete(contact_id=0):
     contact = Contact.find(contact_id)
     contact.delete()
-    if request.headers.get('HX-Trigger') == 'delete-btn':
-        flash("Deleted Contact!")
+    if request.headers.get("HX-Trigger") == "delete-btn":
         return redirect("/contacts", 303)
     else:
         return ""
@@ -129,14 +133,14 @@ def contacts_delete_all():
     for contact_id in contact_ids:
         contact = Contact.find(contact_id)
         contact.delete()
-    flash("Deleted Contacts!")
     contacts_set = Contact.all(1)
-    return render_template("index.html", contacts=contacts_set)
+    return render_template("index.html", contacts=contacts_set, archiver=Archiver.get())
 
 
 # ===========================================================
 # JSON Data API
 # ===========================================================
+
 
 @app.route("/api/v1/contacts", methods=["GET"])
 def json_contacts():
@@ -146,8 +150,13 @@ def json_contacts():
 
 @app.route("/api/v1/contacts", methods=["POST"])
 def json_contacts_new():
-    c = Contact(None, request.form.get('first_name'), request.form.get('last_name'), request.form.get('phone'),
-                request.form.get('email'))
+    c = Contact(
+        None,
+        request.form.get("first_name"),
+        request.form.get("last_name"),
+        request.form.get("phone"),
+        request.form.get("email"),
+    )
     if c.save():
         return c.__dict__
     else:
@@ -163,7 +172,12 @@ def json_contacts_view(contact_id=0):
 @app.route("/api/v1/contacts/<contact_id>", methods=["PUT"])
 def json_contacts_edit(contact_id):
     c = Contact.find(contact_id)
-    c.update(request.form['first_name'], request.form['last_name'], request.form['phone'], request.form['email'])
+    c.update(
+        request.form["first_name"],
+        request.form["last_name"],
+        request.form["phone"],
+        request.form["email"],
+    )
     if c.save():
         return c.__dict__
     else:

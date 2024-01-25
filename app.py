@@ -97,6 +97,8 @@ def contacts_edit_get(contact_id=0):
 @app.route("/contacts/<contact_id>/edit", methods=["POST"])
 def contacts_edit_post(contact_id=0):
     c = Contact.find(contact_id)
+    if c is None:
+        return {"errors": "Contact not found"}, 404
     c.update(
         request.form["first_name"],
         request.form["last_name"],
@@ -112,6 +114,8 @@ def contacts_edit_post(contact_id=0):
 @app.route("/contacts/<contact_id>/email", methods=["GET"])
 def contacts_email_get(contact_id=0):
     c = Contact.find(contact_id)
+    if c is None:
+        return {"errors": "Contact not found"}, 404
     c.email = request.args.get("email")
     c.validate()
     return c.errors.get("email") or ""
@@ -120,6 +124,8 @@ def contacts_email_get(contact_id=0):
 @app.route("/contacts/<contact_id>", methods=["DELETE"])
 def contacts_delete(contact_id=0):
     contact = Contact.find(contact_id)
+    if contact is None:
+        return {"errors": "Contact not found"}, 404
     contact.delete()
     if request.headers.get("HX-Trigger") == "delete-btn":
         return redirect("/contacts", 303)
@@ -132,6 +138,8 @@ def contacts_delete_all():
     contact_ids = list(map(int, request.form.getlist("selected_contact_ids")))
     for contact_id in contact_ids:
         contact = Contact.find(contact_id)
+        if contact is None:
+            return {"errors": "Contact not found"}, 404
         contact.delete()
     contacts_set = Contact.all(1)
     return render_template("index.html", contacts=contacts_set, archiver=Archiver.get())
@@ -172,6 +180,8 @@ def json_contacts_view(contact_id=0):
 @app.route("/api/v1/contacts/<contact_id>", methods=["PUT"])
 def json_contacts_edit(contact_id):
     c = Contact.find(contact_id)
+    if c is None:
+        return {"errors": "Contact not found"}, 404
     c.update(
         request.form["first_name"],
         request.form["last_name"],
@@ -187,6 +197,8 @@ def json_contacts_edit(contact_id):
 @app.route("/api/v1/contacts/<contact_id>", methods=["DELETE"])
 def json_contacts_delete(contact_id=0):
     contact = Contact.find(contact_id)
+    if contact is None:
+        return {"errors": "Contact not found"}, 404
     contact.delete()
     return jsonify({"success": True})
 

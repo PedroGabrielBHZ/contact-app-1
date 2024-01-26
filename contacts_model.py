@@ -1,5 +1,4 @@
 import json
-from operator import attrgetter
 import time
 from threading import Thread
 from random import random
@@ -34,7 +33,7 @@ class Contact:
 
     def validate(self):
         if not self.email:
-            self.errors["email"] = "Email Required"
+            self.errors["email"] = "Email required"
         existing_contact = next(
             filter(
                 lambda c: c.id != self.id and c.email == self.email, Contact.db.values()
@@ -42,7 +41,7 @@ class Contact:
             None,
         )
         if existing_contact:
-            self.errors["email"] = "Email Must Be Unique"
+            self.errors["email"] = "Email must be unique"
         return len(self.errors) == 0
 
     def save(self):

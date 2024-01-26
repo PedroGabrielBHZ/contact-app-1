@@ -10,8 +10,9 @@
           name="email"
           id="email"
           type="email"
-          hx-get="contacts/{{ contact.id }}/email"
+          hx-get="contacts/email/validate"
           hx-target="next .error"
+          hx-trigger="change, keyup"
           placeholder="Email"
           value="{{ contact.email or '' }}"
         />

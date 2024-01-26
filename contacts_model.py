@@ -2,6 +2,7 @@ import json
 import time
 from threading import Thread
 from random import random
+from email_validator import validate_email, EmailNotValidError
 
 
 # ========================================================
@@ -32,8 +33,14 @@ class Contact:
         self.email = email
 
     def validate(self):
-        if not self.email:
-            self.errors["email"] = "Email required"
+        if not self.email or type(self.email) != str:
+            self.errors["email"] = "Email is required"
+            return False
+        try:
+            v = validate_email(self.email)
+            self.email = v["email"]
+        except EmailNotValidError as e:
+            self.errors["email"] = str(e)
         existing_contact = next(
             filter(
                 lambda c: c.id != self.id and c.email == self.email, Contact.db.values()
